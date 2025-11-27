@@ -1,3 +1,8 @@
+console.log("🚀 正在运行的代码版本：V5.0");
+console.log("🔑 使用的 URL:", supabaseUrl);
+console.log("🔑 使用的 Key (前5位):", supabaseKey.substring(0, 5));
+console.log("📋 目标表名:", "final_games"); // 确保这里是你刚才改的新表名
+
 // 1. 初始化 Supabase (请填入你的信息)
 const supabaseUrl = 'https://uyvixbgmynvrfbfiewak.supabase.co'; 
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dml4YmdteW52cmZiZmlld2FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMDg5NjcsImV4cCI6MjA3OTc4NDk2N30.vWD3rypscoap9mETCCD7hcEv6Fa8MCzGDEI42L7O3yg'; 
