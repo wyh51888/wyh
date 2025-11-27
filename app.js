@@ -64,7 +64,7 @@ if (uploadBtn) {
 
             // 5. 存入数据库
             const { error: dbError } = await db
-                .from('games')
+                .from('final_games')
                 .insert([
                     { name: name, url: publicUrl }
                 ]);
@@ -89,7 +89,7 @@ async function loadGames() {
     if (!gamesGrid) return;
 
     const { data, error } = await db
-        .from('games')
+        .from('final_games')
         .select('*')
         .order('created_at', { ascending: false });
 
