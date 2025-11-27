@@ -1,81 +1,58 @@
-/* 全局样式：让页面不那么丑 */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f2f5;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    margin: 0;
+/* --- 游戏库网格布局 (Grid) --- */
+.games-grid {
+    display: grid;
+    /* 自动适应宽度，每个格子最小 120px */
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+    gap: 20px; /* 格子之间的间距 */
+    padding: 20px 0;
 }
 
-.container {
-    background-color: white;
-    padding: 2rem;
+/* 单个游戏卡片的设计 */
+.game-card {
+    background: white;
     border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 600px;
-    text-align: center;
-}
-
-h1 {
-    color: #2c3e50;
-    margin-bottom: 2rem;
-}
-
-/* --- 重点在这里：上传区域的设计 --- */
-.upload-section {
-    background-color: #e1f5fe; /* 浅蓝色背景 */
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    border: 2px dashed #81d4fa; /* 虚线边框 */
-}
-
-.upload-section input {
-    display: block;
-    width: 80%; /* 输入框宽度 */
-    padding: 10px;
-    margin: 10px auto; /* 居中 */
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* --- 这就是你要的按钮设计 --- */
-#uploadBtn {
-    background-color: #007bff; /* 亮蓝色 */
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    font-size: 16px;
-    border-radius: 25px; /* 圆角 */
-    cursor: pointer;
-    transition: background-color 0.3s; /* 鼠标放上去有渐变效果 */
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-#uploadBtn:hover {
-    background-color: #0056b3; /* 鼠标悬停变深色 */
-}
-
-/* 游戏列表样式 */
-.game-list ul {
-    list-style: none;
-    padding: 0;
-}
-
-.game-list li {
-    background: #fff;
-    border-bottom: 1px solid #eee;
     padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    border: 1px solid #eee;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
 }
 
-.game-list a {
-    color: #007bff;
-    text-decoration: none;
+/* 鼠标放上去浮起来 */
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* 游戏图标（用 Emoji 代替图片） */
+.game-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+    background-color: #f0f2f5;
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    border-radius: 50%; /* 圆形背景 */
+}
+
+.game-title {
     font-weight: bold;
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 10px;
+    word-break: break-all; /* 防止名字太长撑破 */
+}
+
+.play-btn {
+    background-color: #28a745; /* 绿色按钮 */
+    color: white;
+    text-decoration: none;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 12px;
+    display: inline-block;
 }

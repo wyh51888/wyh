@@ -1,38 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>我的小游戏站</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <body>
     <div class="container">
-        <h1>🎮 欢迎来到游戏乐园 (Supabase版)</h1>
+        <h1>🎮 欢迎来到游戏乐园</h1>
         
-        <!-- 上传区域 -->
+        <!-- 上传区域 (已更新为文件上传) -->
         <div class="upload-section">
-            <h2>上传你的游戏</h2>
-            <input type="text" id="gameName" placeholder="游戏名称">
-            <input type="text" id="gameUrl" placeholder="游戏链接 (例如 itch.io 地址)">
+            <h2>📤 上传你的游戏文件</h2>
+            <input type="text" id="gameName" placeholder="给游戏起个名字">
+            
+            <div class="file-input-wrapper">
+                <label style="display:block; margin-bottom:5px; color:#666;">选择 HTML 文件：</label>
+                <input type="file" id="gameFile" accept=".html">
+            </div>
+            
             <button id="uploadBtn">发布游戏</button>
+            <p style="font-size: 12px; color: #888; margin-top: 10px;">注意：目前仅支持单文件 HTML 游戏</p>
         </div>
 
-        <!-- 游戏列表区域 -->
+        <!-- 游戏列表区域 (已更新为网格布局 ID) -->
         <div class="game-list">
-            <h2>最新游戏</h2>
-            <ul id="gamesContainer">
-                <!-- 游戏会显示在这里 -->
-            </ul>
+            <h2>🕹️ 最新游戏库</h2>
+            <div id="gamesGrid" class="games-grid">
+                <!-- 游戏图标会显示在这里 -->
+            </div>
         </div>
     </div>
 
-    <!-- 1. 引入 Supabase SDK (这是关键变化) -->
+    <!-- 引入 Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- 2. 引入我们的逻辑代码 -->
+    <!-- 引入我们的逻辑代码 -->
     <script src="app.js"></script>
-</body>
-
 </body>
 </html>
