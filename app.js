@@ -1,25 +1,29 @@
-console.log("🚀 正在运行的代码版本：V5.0");
+// 1. 初始化 Supabase (请务必填入你最新的 URL 和 Key)
+const supabaseUrl = 'https://你的URL.supabase.co'; 
+const supabaseKey = '你的anon_Key'; 
+
+// --- 调试监控 (放在定义之后) ---
+console.log("🚀 正在运行的代码版本：V6.0 (最终修复版)");
 console.log("🔑 使用的 URL:", supabaseUrl);
-console.log("🔑 使用的 Key (前5位):", supabaseKey.substring(0, 5));
-console.log("📋 目标表名:", "final_games"); // 确保这里是你刚才改的新表名
+// 只打印前5位，方便核对又保护隐私
+if (supabaseKey) {
+    console.log("🔑 使用的 Key (前5位):", supabaseKey.substring(0, 5));
+} else {
+    console.error("❌ 警告：Supabase Key 未填写！");
+}
 
-// 1. 初始化 Supabase (请填入你的信息)
-const supabaseUrl = 'https://uyvixbgmynvrfbfiewak.supabase.co'; 
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dml4YmdteW52cmZiZmlld2FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMDg5NjcsImV4cCI6MjA3OTc4NDk2N30.vWD3rypscoap9mETCCD7hcEv6Fa8MCzGDEI42L7O3yg'; 
-
-// 使用 window.supabase 创建客户端，并命名为 db，防止变量名冲突
+// 创建客户端
 const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 const uploadBtn = document.getElementById('uploadBtn');
 const gamesGrid = document.getElementById('gamesGrid');
 
-// 2. 上传功能的全新逻辑
+// 2. 上传功能的逻辑
 if (uploadBtn) {
     uploadBtn.addEventListener('click', async () => {
         const nameInput = document.getElementById('gameName');
         const fileInput = document.getElementById('gameFile');
         
-        // 检查元素是否存在
         if (!nameInput || !fileInput) {
             alert("页面元素缺失，请检查 HTML ID");
             return;
@@ -37,24 +41,21 @@ if (uploadBtn) {
         uploadBtn.disabled = true;
 
         try {
-            // --- 【核心修复】彻底解决 Header 报错 ---
-            
-            // 1. 生成一个纯数字+英文的安全文件名
+            // --- 【核心修复】防止 Header 报错 ---
+            // 生成纯数字+英文的安全文件名
             const safeName = `${Date.now()}_game.html`;
 
-            // 2. 创建一个新的 File 对象
-            // 这一步是关键：它会丢弃原始文件的中文名，用 safeName 代替
-            // 这样浏览器看到的永远是纯英文，绝对不会报 ISO-8859-1 错误
+            // 创建一个新的“纯净版”文件对象
             const fileToUpload = new File([originalFile], safeName, { type: 'text/html' });
 
-            // 3. 上传这个“纯净版”文件
+            // 3. 上传文件
             const { data: uploadData, error: uploadError } = await db
                 .storage
-                .from('game-files')
+                .from('game-files') // 确保你的 Storage Bucket 叫这个名字
                 .upload(safeName, fileToUpload, {
                     cacheControl: '3600',
                     upsert: false,
-                    contentType: 'text/html' // 明确指定类型
+                    contentType: 'text/html'
                 });
 
             if (uploadError) throw uploadError;
@@ -68,20 +69,20 @@ if (uploadBtn) {
             const publicUrl = urlData.publicUrl;
 
             // 5. 存入数据库
+            // ⚠️ 注意：如果你刚才新建了 final_games 表，请把下面的 'games' 改成 'final_games'
             const { error: dbError } = await db
-                .from('final_games')
+                .from('final_games') 
                 .insert([
                     { name: name, url: publicUrl }
                 ]);
 
             if (dbError) throw dbError;
 
-            alert("发布成功！");
+            alert("发布成功！🎉");
             location.reload();
 
         } catch (error) {
-            console.error("出错了:", error);
-            // 详细展示错误信息
+            console.error("详细错误信息:", error);
             alert("上传失败：" + (error.message || JSON.stringify(error)));
             uploadBtn.textContent = "发布游戏"; 
             uploadBtn.disabled = false;
@@ -93,13 +94,14 @@ if (uploadBtn) {
 async function loadGames() {
     if (!gamesGrid) return;
 
+    // ⚠️ 注意：如果你改了表名，这里也要改
     const { data, error } = await db
-        .from('final_games')
+        .from('final_games') 
         .select('*')
         .order('created_at', { ascending: false });
 
     if (error) {
-        console.log("读取失败:", error);
+        console.log("读取列表失败:", error);
         return;
     }
 
@@ -109,7 +111,6 @@ async function loadGames() {
         const card = document.createElement('div');
         card.className = 'game-card';
         
-        // 点击卡片跳转
         card.onclick = () => window.open(game.url, '_blank');
         
         card.innerHTML = `
