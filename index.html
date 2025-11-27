@@ -1,48 +1,38 @@
-<!doctype html>
-<html lang="zh-CN">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="A simple game site" />
-		<title>My Game Site</title>
-		<!-- Link to local stylesheet -->
-		<link rel="stylesheet" href="style.css" />
-	</head>
-	<body>
-		<header>
-			<h1>My Game Site</h1>
-			<nav>
-				<ul>
-					<li><a href="#home">首页</a></li>
-					<li><a href="#games">游戏</a></li>
-					<li><a href="#about">关于</a></li>
-				</ul>
-			</nav>
-		</header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <body>
+    <div class="container">
+        <h1>🎮 欢迎来到游戏乐园 (Supabase版)</h1>
+        
+        <!-- 上传区域 -->
+        <div class="upload-section">
+            <h2>上传你的游戏</h2>
+            <input type="text" id="gameName" placeholder="游戏名称">
+            <input type="text" id="gameUrl" placeholder="游戏链接 (例如 itch.io 地址)">
+            <button id="uploadBtn">发布游戏</button>
+        </div>
 
-		<main>
-			<section id="home">
-				<h2>欢迎</h2>
-				<p>欢迎来到我的小游戏网站 — 在这里你可以试玩一些有趣的小游戏。</p>
-			</section>
+        <!-- 游戏列表区域 -->
+        <div class="game-list">
+            <h2>最新游戏</h2>
+            <ul id="gamesContainer">
+                <!-- 游戏会显示在这里 -->
+            </ul>
+        </div>
+    </div>
 
-			<section id="games">
-				<h2>游戏</h2>
-				<p>将游戏放在这里：可以是 canvas、iframe 或单独的页面链接。</p>
-			</section>
+    <!-- 1. 引入 Supabase SDK (这是关键变化) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 2. 引入我们的逻辑代码 -->
+    <script src="app.js"></script>
+</body>
 
-			<section id="about">
-				<h2>关于</h2>
-				<p>简单介绍：作者、联系方式或使用说明。</p>
-			</section>
-		</main>
-
-		<footer>
-			<p>&copy; 2025 My Game Site</p>
-		</footer>
-
-		<!-- Link to local JS file -->
-		<script src="app.js" defer></script>
-	</body>
+</body>
 </html>
-
