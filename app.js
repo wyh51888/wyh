@@ -1,116 +1,140 @@
-// 👇 1. 初始化 (记得填回你自己的 URL 和 Key)
-const supabaseUrl = 'https://uyvixbgmynvrfbfiewak.supabase.co'; 
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dml4YmdteW52cmZiZmlld2FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMDg5NjcsImV4cCI6MjA3OTc4NDk2N30.vWD3rypscoap9mETCCD7hcEv6Fa8MCzGDEI42L7O3yg'; 
-
-console.log("🚀 代码版本：V9.0 (显示修复版)");
+// 1. 初始化 (⚠️ 记得填你自己的 URL 和 Key)
+const supabaseUrl = 'https://你的URL.supabase.co'; 
+const supabaseKey = '你的anon_Key'; 
 
 const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 const uploadBtn = document.getElementById('uploadBtn');
 const gamesGrid = document.getElementById('gamesGrid');
 
-// 👇 2. 上传功能
+// 2. 上传逻辑 (保持不变，略微精简)
 if (uploadBtn) {
     uploadBtn.addEventListener('click', async () => {
         const nameInput = document.getElementById('gameName');
         const fileInput = document.getElementById('gameFile');
         
-        if (!nameInput || !fileInput || !fileInput.files[0]) {
-            alert("请填写名字并选择文件！");
+        if (!nameInput.value || !fileInput.files[0]) {
+            alert("⚠️ ERROR: Missing Input Data");
             return;
         }
 
-        uploadBtn.textContent = "正在上传...";
+        uploadBtn.textContent = "UPLOADING...";
         uploadBtn.disabled = true;
 
         try {
-            const file = fileInput.files[0];
             const safeName = `${Date.now()}_game.html`;
-            // 强制文件编码为 UTF-8
-            const newFile = new File([file], safeName, { type: 'text/html;charset=utf-8' });
+            const newFile = new File([fileInput.files[0]], safeName, { type: 'text/html;charset=utf-8' });
 
-            const { error: uploadError } = await db.storage
-                .from('game-files')
-                .upload(safeName, newFile);
+            const { error: upErr } = await db.storage.from('game-files').upload(safeName, newFile);
+            if (upErr) throw upErr;
 
-            if (uploadError) throw uploadError;
-
-            const { data: urlData } = db.storage
-                .from('game-files')
-                .getPublicUrl(safeName);
-                
-            const { error: dbError } = await db.from('games').insert([
-                { name: nameInput.value, url: urlData.publicUrl }
+            const { data: urlData } = db.storage.from('game-files').getPublicUrl(safeName);
+            
+            // 初始点赞数为 0
+            const { error: dbErr } = await db.from('games').insert([
+                { name: nameInput.value, url: urlData.publicUrl, likes: 0 }
             ]);
 
-            if (dbError) throw dbError;
+            if (dbErr) throw dbErr;
 
-            alert("发布成功！🎉");
+            alert("✅ DEPLOYMENT SUCCESSFUL");
             location.reload();
-
         } catch (error) {
             console.error(error);
-            alert("上传失败：" + error.message);
-            uploadBtn.textContent = "发布游戏"; 
+            alert("❌ FAILED: " + error.message);
+            uploadBtn.textContent = "DEPLOY GAME"; 
             uploadBtn.disabled = false;
         }
     });
 }
 
-// 👇 3. 读取与开始游戏功能
+// 3. 核心逻辑：加载、排序、点赞
 async function loadGames() {
     if (!gamesGrid) return;
 
+    // 🔥 关键修改：按 likes 倒序排列 (点赞多的在前面)
     const { data, error } = await db
         .from('games') 
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('likes', { ascending: false }); // false = 降序
 
     if (error) return;
 
     gamesGrid.innerHTML = ''; 
 
-    data.forEach((game) => {
+    data.forEach((game, index) => {
         const card = document.createElement('div');
         card.className = 'game-card';
         
-        // --- 核心逻辑：点击开始游戏 ---
+        // 检查本地是否点赞过
+        const isLiked = localStorage.getItem(`liked_${game.id}`);
+
+        // --- 启动游戏逻辑 ---
         const handlePlay = async (e) => {
-            e.stopPropagation(); 
-            const btn = e.target.closest('.play-btn') || e.target;
-            const originalText = btn.innerText;
-            btn.innerText = "🚀 启动中...";
-            
+            // ... (保持之前的万能中转逻辑不变) ...
+            const btn = e.target;
+            btn.innerText = "🚀 LOADING...";
             try {
-                // A. 使用中转服务下载文件
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(game.url)}`;
                 const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error("下载失败");
-                
-                const blobData = await response.blob();
-                
-                // B. 【关键修复】强制标记为 HTML 网页
-                const blob = new Blob([blobData], { type: 'text/html' }); 
-                
-                // C. 打开
-                const blobUrl = URL.createObjectURL(blob);
-                window.open(blobUrl, '_blank');
-
+                const blob = await response.blob();
+                const htmlBlob = new Blob([blob], { type: 'text/html' }); 
+                window.open(URL.createObjectURL(htmlBlob), '_blank');
             } catch (err) {
-                console.error("启动失败:", err);
-                alert("启动出错，请重试");
+                window.open(game.url, '_blank');
             } finally {
-                btn.innerText = originalText;
+                btn.innerText = "START GAME";
             }
         };
 
+        // --- 🔥 点赞逻辑 ---
+        const handleLike = async (e) => {
+            const likeBtn = e.currentTarget;
+            const countSpan = likeBtn.querySelector('.count');
+            
+            // 1. 防刷检查
+            if (localStorage.getItem(`liked_${game.id}`)) {
+                alert("⛔ 你已经投过票了 (You already voted)");
+                return;
+            }
+
+            // 2. 乐观更新 UI (先变数字，让用户感觉快)
+            let newCount = (game.likes || 0) + 1;
+            countSpan.innerText = newCount;
+            likeBtn.classList.add('liked');
+
+            // 3. 调用 Supabase 函数更新数据库
+            // 使用 rpc 调用我们在 SQL 里写的 increment_likes 函数
+            const { error } = await db.rpc('increment_likes', { row_id: game.id });
+
+            if (error) {
+                console.error(error);
+                alert("Vote failed");
+                // 回滚 UI
+                countSpan.innerText = game.likes;
+                likeBtn.classList.remove('liked');
+            } else {
+                // 4. 记录到本地，防止重复点赞
+                localStorage.setItem(`liked_${game.id}`, 'true');
+            }
+        };
+
+        // 渲染卡片 HTML
         card.innerHTML = `
-            <div class="game-icon">🎮</div>
+            <div class="rank-badge">#${index + 1}</div>
+            <div class="game-icon">👾</div>
             <div class="game-title">${game.name}</div>
-            <button class="play-btn">开始游玩</button>
+            <div class="card-actions">
+                <button class="play-btn">START GAME</button>
+                <button class="like-btn ${isLiked ? 'liked' : ''}">
+                    <span>❤️</span> 
+                    <span class="count">${game.likes || 0}</span>
+                </button>
+            </div>
         `;
         
-        const btn = card.querySelector('.play-btn');
-        btn.onclick = handlePlay;
+        // 绑定事件
+        card.querySelector('.play-btn').onclick = handlePlay;
+        card.querySelector('.like-btn').onclick = handleLike;
         
         gamesGrid.appendChild(card);
     });

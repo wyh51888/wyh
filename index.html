@@ -3,40 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的小游戏站</title>
+    <title>GEEK GAME CONTEST // 极客游戏赛</title>
+    
+    <!-- 1. 引入极客风字体 (Fira Code) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 2. 引入你的样式表 -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- 3. 引入 Supabase SDK (必须有这个才能连数据库) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>🎮 欢迎来到游戏乐园</h1>
+
+    <!-- 顶部标题区 -->
+    <header>
+        <h1>&lt;GEEK_GAME_JAM /&gt;</h1>
+        <div class="subtitle">Code. Deploy. Compete. // 极客游戏开发大赛</div>
+    </header>
+
+    <!-- 上传控制台 -->
+    <div class="upload-section">
+        <div class="input-group">
+            <span class="prefix">$ name:</span>
+            <input type="text" id="gameName" placeholder="Enter_Project_Name..." autocomplete="off">
+        </div>
         
-        <!-- 上传区域 (已更新为文件上传) -->
-        <div class="upload-section">
-            <h2>📤 上传你的游戏文件</h2>
-            <input type="text" id="gameName" placeholder="给游戏起个名字">
-            
-            <div class="file-input-wrapper">
-                <label style="display:block; margin-bottom:5px; color:#666;">选择 HTML 文件：</label>
-                <input type="file" id="gameFile" accept=".html">
-            </div>
-            
-            <button id="uploadBtn">发布游戏</button>
-            <p style="font-size: 12px; color: #888; margin-top: 10px;">注意：目前仅支持单文件 HTML 游戏</p>
+        <div class="input-group">
+            <span class="prefix">$ source:</span>
+            <input type="file" id="gameFile" accept=".html">
         </div>
 
-        <!-- 游戏列表区域 (已更新为网格布局 ID) -->
-        <div class="game-list">
-            <h2>🕹️ 最新游戏库</h2>
-            <div id="gamesGrid" class="games-grid">
-                <!-- 游戏图标会显示在这里 -->
-            </div>
-        </div>
+        <button id="uploadBtn">
+            <span>DEPLOY_TO_CLOUD</span>
+        </button>
     </div>
 
-    <!-- 引入 Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- 引入我们的逻辑代码 -->
+    <!-- 游戏展示区 (排行榜) -->
+    <main>
+        <div class="grid-header">
+            <span>// RANKING_LIST</span>
+            <span class="status-dot">LIVE ●</span>
+        </div>
+        <div id="gamesGrid">
+            <!-- JS 会自动把游戏卡片插到这里 -->
+            <div class="loading-text">Initializing connection...</div>
+        </div>
+    </main>
+
+    <!-- 4. 引入你的逻辑代码 -->
     <script src="app.js"></script>
 </body>
 </html>
