@@ -1,6 +1,6 @@
 // 1. 初始化 (⚠️ 记得填你自己的 URL 和 Key)
-const supabaseUrl = 'https://你的URL.supabase.co'; 
-const supabaseKey = '你的anon_Key'; 
+const supabaseUrl = 'https://uyvixbgmynvrfbfiewak.supabase.co'; 
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dml4YmdteW52cmZiZmlld2FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMDg5NjcsImV4cCI6MjA3OTc4NDk2N30.vWD3rypscoap9mETCCD7hcEv6Fa8MCzGDEI42L7O3yg'; 
 
 const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 const uploadBtn = document.getElementById('uploadBtn');
